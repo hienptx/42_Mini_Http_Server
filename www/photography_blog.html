@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Captured Moments - Photography Blog</title>
+  <link rel="stylesheet" href="/style.css">  
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Captured Moments</h1>
+      <p class="subtitle">A journey through lens and light</p>
+    </header>
+
+    <nav class="category-nav">
+      <button class="category-btn active" data-category="all">All</button>
+      <button class="category-btn" data-category="digital-art">Digital Art</button>
+      <button class="category-btn" data-category="mom-baby">Mom & Baby</button>
+      <button class="category-btn" data-category="nature">Nature</button>
+      <button class="category-btn" data-category="cities">Cities</button>
+      <button class="category-btn" data-category="people">People</button>
+      <button class="category-btn" data-category="animals">Animals</button>
+      <button class="category-btn" data-category="random">Random</button>
+    </nav>
+
+    <div class="gallery" id="gallery">
+      <!-- Photos will be populated by JavaScript -->
+    </div>
+
+    <footer>
+      <p>&copy; 2025 Captured Moments. Every moment tells a story.</p>
+    </footer>
+  </div>
+
+  <!-- Modal for full-size images -->
+  <div id="modal" class="modal">
+    <span class="close">&times;</span>
+    <div class="modal-content">
+      <img class="modal-image" id="modal-image">
+    </div>
+  </div>
+
+  <script>
+    // Sample photo data - replace with your actual photos
+    const photos = [
+      {
+        id: 1,
+        title: "Fractol - Burning Ship",
+        category: "digital-art",
+        description: "A stunning fractal art piece showcasing the Burning Ship fractal, a mesmerizing blend of mathematics and creativity.",
+        image: "/images/digitalart/burningShip.png"
+      },
+      {
+        id: 2,
+        title: "Tübingen river",
+        category: "cities",
+        description: "Golden hour breaking over misty mountain peaks, nature's daily masterpiece.",
+        image: "/images/cities/tübingen.JPG"
+      },
+      {
+        id: 3,
+        title: "Baby Belly",
+        category: "mom-baby",
+        description: "A beautiful moment capturing the joy of motherhood, a glowing baby belly in soft light.",
+        image: "images/momandbaby/babybelly.JPG"
+      },
+      {
+        id: 4,
+        title: "Mom in White Dress",
+        category: "mom-baby",
+        description: "A serene image of a mother in a flowing white dress, embodying grace and tranquility.",
+        image: "images/momandbaby/momwhite.JPG"
+      },
+      {
+        id: 5,
+        title: "Coffee & Dreams",
+        category: "random",
+        description: "Morning coffee steam rising, a quiet moment before the day begins.",
+        image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80"
+      },
+      {
+        id: 6,
+        title: "First Steps",
+        category: "mom-baby",
+        description: "A tender moment of a baby taking their first steps, a milestone in every parent's journey.",
+        image: "/images/momandbaby/mommilk.JPG"
+      },
+      {
+        id: 7,
+        title: "Ocean Waves",
+        category: "nature",
+        description: "Powerful waves crashing against rocky shores, nature's endless rhythm.",
+        image: "https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80"
+      },
+      {
+        id: 8,
+        title: "Family Laughter",
+        category: "mom-baby",
+        description: "Joy captured in a spontaneous moment of pure, unguarded laughter.",
+        image: "/images/momandbaby/family.JPG"
+      },
+      {
+        id: 9,
+        title: "Frogs",
+        category: "animals",
+        description: "A serene pond scene with frogs basking in the sun, a peaceful slice of nature.",
+        image: "/images/animals/frog.JPG"
+      },
+      {
+        id: 10,
+        title: "Vintage Books",
+        category: "random",
+        description: "Old books stacked with stories untold, wisdom waiting to be discovered.",
+        image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&q=80"
+      },
+      {
+        id: 11,
+        title: "Baby's Smile",
+        category: "mom-baby",
+        description: "Pure innocence and joy captured in a baby's radiant smile.",
+        image: "images/momandbaby/lukie.JPG"
+      },
+      {
+        id: 12,
+        title: "Forest Path",
+        category: "nature",
+        description: "A winding path through ancient trees, inviting adventure and contemplation.",
+        image: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80"
+      }
+    ];
+
+    let currentCategory = 'all';
+
+    function createPhotoCard(photo) {
+      return `
+        <div class="photo-card" data-category="${photo.category}" onclick="openModal('${photo.image}')">
+          <div class="photo-wrapper">
+            <img src="${photo.image}" alt="${photo.title}" class="photo">
+            <div class="photo-overlay">
+              <div class="photo-title">${photo.title}</div>
+            </div>
+          </div>
+          <div class="photo-info">
+            <div class="photo-category">${photo.category.replace('-', ' & ')}</div>
+            <div class="photo-description">${photo.description}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function displayPhotos(category = 'all') {
+      const gallery = document.getElementById('gallery');
+      const filteredPhotos = category === 'all' ? photos : photos.filter(photo => photo.category === category);
+      
+      gallery.innerHTML = filteredPhotos.map(photo => createPhotoCard(photo)).join('');
+      
+      // Animate cards
+      setTimeout(() => {
+        document.querySelectorAll('.photo-card').forEach((card, index) => {
+          card.style.opacity = '0';
+          card.style.transform = 'translateY(20px)';
+          setTimeout(() => {
+            card.style.transition = 'all 0.5s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+          }, index * 100);
+        });
+      }, 50);
+    }
+
+    function openModal(imageSrc) {
+      const modal = document.getElementById('modal');
+      const modalImage = document.getElementById('modal-image');
+      
+      modalImage.src = imageSrc;
+      modal.style.display = 'block';
+      
+      setTimeout(() => {
+        modal.style.opacity = '1';
+      }, 10);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('modal');
+      modal.style.opacity = '0';
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    }
+
+    // Event listeners
+    document.querySelectorAll('.category-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const category = btn.dataset.category;
+        currentCategory = category;
+        displayPhotos(category);
+      });
+    });
+
+    // Modal event listeners
+    document.querySelector('.close').addEventListener('click', closeModal);
+    document.getElementById('modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('modal')) {
+        closeModal();
+      }
+    });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal();
+      }
+    });
+
+    // Initialize gallery
+    displayPhotos();
+  </script>
+</body>
+</html>
